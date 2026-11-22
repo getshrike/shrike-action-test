@@ -1,0 +1,35 @@
+name: shrike
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  delta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install getshrike
+        run: npm install --no-save --no-package-lock getshrike
+      - name: Shrike delta
+        uses: marrrkkk/shrike/packages/action@main
+        with:
+          mode: delta
+          base: origin/${{ github.base_ref || 'main' }}
+          fail-on: never
+      - name: Upload delta artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shrike-delta
+          path: .shrike/action-delta.json
+          if-no-files-found: ignore

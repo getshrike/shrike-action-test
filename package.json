@@ -1,0 +1,5 @@
+{
+  "name": "shrike-action-test",
+  "private": true,
+  "type": "module"
+}
