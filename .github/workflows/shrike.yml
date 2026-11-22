@@ -22,7 +22,7 @@ jobs:
       - name: Install getshrike
         run: npm install --no-save --no-package-lock getshrike
       - name: Shrike delta
-        uses: marrrkkk/shrike/packages/action@main
+        uses: getshrike/shrike/packages/action@main
         with:
           mode: delta
           base: origin/${{ github.base_ref || 'main' }}
