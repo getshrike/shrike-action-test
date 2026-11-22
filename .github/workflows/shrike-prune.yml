@@ -1,0 +1,42 @@
+name: shrike prune
+
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: Base branch
+        required: false
+        default: main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install getshrike
+        run: npm install --no-save --no-package-lock getshrike
+      - name: Shrike prune
+        uses: getshrike/shrike/packages/action@main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          mode: prune
+          base: origin/${{ inputs.base }}
+      - name: Upload prune evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shrike-prune
+          path: |
+            .shrike/action-delta.json
+            .shrike/receipts/*.json
+          if-no-files-found: ignore
